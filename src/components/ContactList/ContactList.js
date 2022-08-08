@@ -37,7 +37,7 @@ export default class ContactList extends Component {
               </li>
             );
           }
-          return;
+          return <></>;
         })}
       </ul>
     );

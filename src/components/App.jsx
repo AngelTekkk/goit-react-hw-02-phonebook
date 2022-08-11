@@ -22,40 +22,10 @@ export default class App extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const loginInputId = nanoid();
-    const isAlreadyAdded = this.state.contacts.find(
-      contact => contact.name === this.state.name
-    );
-
-    if (isAlreadyAdded) {
-      Notify.failure(`${this.state.name} is already in contacts.`);
-    } else {
-      Notify.success(`${this.state.name} is added to contacts.`);
-      this.setState(prevState => {
-        return {
-          contacts: [
-            ...prevState.contacts,
-            {
-              name: this.state.name,
-              number: this.state.number,
-              id: loginInputId,
-            },
-          ],
-        };
-      });
-    }
-
-    form.reset();
-  };
-
   handleDelete = e => {
+    const { contacts } = this.state;
     const contactId = e.target.parentNode.id;
-    const contactName = this.state.contacts.find(
-      contact => contact.id === contactId
-    ).name;
+    const contactName = contacts.find(contact => contact.id === contactId).name;
     Notify.info(`${contactName} is deleted from contacts.`);
     this.setState(prevState => {
       return {
@@ -66,14 +36,42 @@ export default class App extends Component {
     });
   };
 
+  handleAddContact = contact => {
+    const { name, number, id } = contact;
+    const { contacts } = this.state;
+    const isNameAlreadyAdded = contacts.find(
+      c => c.name.toLowerCase() === name.toLowerCase()
+    );
+    const isNumberAlreadyAdded = contacts.find(c => c.number === number);
+
+    if (isNameAlreadyAdded || isNumberAlreadyAdded) {
+      isNameAlreadyAdded && Notify.failure(`${name} is already in contacts.`);
+      isNumberAlreadyAdded &&
+        Notify.failure(
+          `${number} is already in contacts as ${isNumberAlreadyAdded.name}.`
+        );
+    } else {
+      Notify.success(`${name} is added to contacts.`);
+      this.setState(prevState => {
+        return {
+          contacts: [
+            ...prevState.contacts,
+            {
+              name: name,
+              number: number,
+              id: id,
+            },
+          ],
+        };
+      });
+    }
+  };
+
   render() {
     return (
       <>
         <Section title="Phonebook">
-          <ContactForm
-            onSubmit={this.handleSubmit}
-            onChange={this.handleChange}
-          />
+          <ContactForm onAddContact={this.handleAddContact} />
         </Section>
         <Section title="Contacts">
           <Filter onChange={this.handleChange} />

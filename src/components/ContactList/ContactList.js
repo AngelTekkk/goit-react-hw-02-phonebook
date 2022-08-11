@@ -15,31 +15,39 @@ export default class ContactList extends Component {
   };
 
   render() {
-    const filter = this.props.filter.toLowerCase();
-    const filtredContactList = this.props.contacts.filter(contact => {
+    const { contacts, filter, onClick } = this.props;
+    const filtredContactList = contacts.filter(contact => {
       const name = contact.name.toLowerCase();
-      return name.includes(filter);
+      return name.includes(filter.toLowerCase());
     });
 
     return (
       <ul className={s.list}>
         {filtredContactList.map(contact => {
           return (
-            <li key={contact.id} id={contact.id} className={s.item}>
-              <p>
-                {contact.name}: {contact.number}
-              </p>
-              <button
-                className={s.button}
-                type="button"
-                onClick={this.props.onClick}
-              >
-                Delete
-              </button>
-            </li>
+            <Contact key={contact.id} contact={contact} onClick={onClick} />
           );
         })}
       </ul>
+    );
+  }
+}
+
+class Contact extends Component {
+  static propTypes = {};
+
+  render() {
+    const { contact, onClick } = this.props;
+    const { id, name, number } = contact;
+    return (
+      <li id={id} className={s.item}>
+        <p>
+          {name}: {number}
+        </p>
+        <button className={s.button} type="button" onClick={onClick}>
+          Delete
+        </button>
+      </li>
     );
   }
 }

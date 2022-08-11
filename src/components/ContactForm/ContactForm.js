@@ -1,16 +1,42 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
+import { Notify } from 'notiflix';
 import s from './ContactForm.module.css';
 
 export default class ContactForm extends Component {
   static propTypes = {
-    onChange: PropTypes.func,
-    onSubmit: PropTypes.func,
+    onAddContact: PropTypes.func,
+  };
+
+  state = {
+    name: '',
+    number: '',
+  };
+
+  handleChange = e => {
+    this.setState(() => ({ [e.target.name]: e.target.value }));
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    const { name, number } = this.state;
+    const form = e.currentTarget;
+    const loginInputId = nanoid();
+    const contact = {
+      name: name,
+      number: number,
+      id: loginInputId,
+    };
+
+    this.props.onAddContact(contact);
+    this.setState(() => ({ name: '', number: '' }));
+    form.reset();
   };
 
   render() {
     return (
-      <form onSubmit={this.props.onSubmit} className={s.form}>
+      <form onSubmit={this.handleSubmit} className={s.form}>
         <label className={s.label}>
           <input
             className={s.input}
@@ -20,7 +46,7 @@ export default class ContactForm extends Component {
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
-            onChange={this.props.onChange}
+            onChange={this.handleChange}
           />
         </label>
         <label className={s.label}>
@@ -32,7 +58,7 @@ export default class ContactForm extends Component {
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
-            onChange={this.props.onChange}
+            onChange={this.handleChange}
           />
         </label>
         <button type="submit" className={s.button}>

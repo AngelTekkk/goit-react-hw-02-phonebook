@@ -34,7 +34,14 @@ export default class ContactList extends Component {
 }
 
 class Contact extends Component {
-  static propTypes = {};
+  static propTypes = {
+    contact: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    }),
+    onClick: PropTypes.func.isRequired,
+  };
 
   render() {
     const { contact, onClick } = this.props;

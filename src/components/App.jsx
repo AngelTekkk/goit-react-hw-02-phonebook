@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { nanoid } from 'nanoid';
 import { Notify } from 'notiflix';
 
 import ContactForm from './ContactForm';
